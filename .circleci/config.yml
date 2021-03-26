@@ -49,7 +49,7 @@ jobs:
             # Your code here
             #exit 1
       - save_cache:
-          paths: [frontend/node_modules]
+          paths:  ~/project/frontend/node_modules
           key: frontend-build
 
   build-backend:
@@ -62,11 +62,13 @@ jobs:
       - run:
           name: Back-end build
           command: |
+            cd backend
             npm i
+            npm run build
              # Your code here
              #exit 1
       - save_cache:
-          paths: [backend/node_modules]
+          paths: ~/project/backend/node_modules
           key: backend-build
 
 
