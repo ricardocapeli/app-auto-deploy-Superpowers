@@ -8,6 +8,20 @@ log.txt
 *.sublime-workspace
 .vscode/
 npm-debug.log*
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+*.swp
+
+pids
+logs
+results
+tmp
 
 .idea/
 .ionic/
@@ -68,4 +82,20 @@ node_modules
 
 .env
 dist
+dist/**/*
 Presentation1.pptx
+.circleci_old/
+
+# ignore yarn.lock
+yarn.lock
+
+# Optional REPL history
+.node_repl_history
+
+typings/
+lib/*.js
+test/*.js
+*.map
+
+# Optional npm cache directory
+.npm
