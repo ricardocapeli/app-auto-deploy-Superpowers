@@ -79,7 +79,6 @@ jobs:
           command: |
             cd frontend
             npm i
-            npm install -g jest
             npm run test
                 
   test-backend:
@@ -93,6 +92,7 @@ jobs:
           name: Run backend tests
           command: |
             cd backend
+            npm i
             npm run test
 
   scan-frontend:
