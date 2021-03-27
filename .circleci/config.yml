@@ -182,6 +182,6 @@ workflows:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
             branches:
-              only: [master]          
+              only: [main]          
 
 
