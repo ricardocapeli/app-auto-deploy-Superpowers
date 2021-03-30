@@ -1,0 +1,67 @@
+---
+- name: "update apt packages."
+  become: yes
+  apt:
+    update_cache: yes
+
+- name: "upgrade packages"
+  become: yes
+  apt:
+    upgrade: yes
+
+- name: remove dependencies that are no longer needed
+  become: yes
+  apt:
+    autoremove: yes
+
+- name: "install git"
+  become: yes
+  apt:
+    name: git-all
+    state: latest
+    update_cache: yes
+
+- name: "install build-essentials"
+  become: yes
+  apt:
+    name: build-essentials
+    state: latest
+    update_cache: yes
+
+- name: "install build tools"
+  become: yes
+  apt:
+    name: ["curl", "openssl", "tar", "libssl-dev"]
+    state: latest
+    update_cache: yes
+
+- name: "install dependencies"
+  become: yes
+  apt:
+    name: ["nodejs", "npm"]
+    state: latest
+    update_cache: yes
+
+- name: "install libcap2-bin"
+  become: yes
+  apt:
+    name: libcap2-bin
+    state: latest
+    update_cache: yes
+
+- name: permission to use Port 80
+  become: yes
+  shell: setcap cap_net_bind_service=+ep /usr/local/bin/node
+
+- name: "install pm2"
+  become: yes
+  npm:
+    name: pm2
+    global: yes
+    production: yes
+    state: present
+
+- name: Create directory
+  file:
+    path: ./backend-site
+    state: directory

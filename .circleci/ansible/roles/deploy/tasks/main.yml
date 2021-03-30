@@ -1,0 +1,50 @@
+---
+- name: "upgrade packages"
+  become: yes
+  apt:
+    upgrade: yes
+
+- name: remove dependencies that are no longer needed
+  become: yes
+  apt:
+    autoremove: yes
+
+- name: "install build tools"
+  become: yes
+  apt:
+    name: ["curl", "openssl", "tar", "libssl-dev"]
+    state: latest
+    update_cache: yes
+
+- name: "install dependencies"
+  become: yes
+  apt:
+    name: ["nodejs", "npm"]
+    state: latest
+    update_cache: yes
+
+- name: "install libcap2-bin"
+  become: yes
+  apt:
+    name: libcap2-bin
+    state: latest
+    update_cache: yes
+
+- name: "copy backend folder"
+  become: yes
+  copy:
+    src: /root/project/backend
+    dest: /home/ubuntu
+
+- name: install node
+  shell: |
+    cd /home/ubuntu/backend
+    npm install
+- name: setup backend services
+  shell: |
+    cd /home/ubuntu/backend
+    npm run build
+- name: start backend services
+  shell: |
+    cd /home/ubuntu/backend
+    pm2 start npm --name "backend" run start
