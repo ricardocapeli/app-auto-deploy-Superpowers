@@ -208,21 +208,21 @@ jobs:
             apk add --update py3-pip && pip3 install --upgrade pip && pip3 install awscli
       - destroy-environment
 
-  run-migrations:
-    docker:
+  #run-migrations:
+    #docker:
       # Docker image here that supports NodeJS
-    steps:
+    #steps:
       # Checkout code from git
-      - run:
-          name: Run migrations
-          command: |
+      #- run:
+          #name: Run migrations
+          #command: |
             # Your code here
-            exit 1
-      - run:
-          name: Send migration results to memstash
-          command: |
+            #exit 1
+      #- run:
+          #name: Send migration results to memstash
+          #command: |
             # Your code here
-            exit 1
+            #exit 1
      # Here's where you will add some code to rollback on failure
 
 workflows:
