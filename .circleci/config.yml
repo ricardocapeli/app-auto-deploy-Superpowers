@@ -134,6 +134,12 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
+
+      - run:
+          name: Install prerequsites
+          command: |
+            yum -y install tar gzip jq git
+
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -155,7 +161,6 @@ jobs:
       - run:
           name: Add back-end ip to ansible inventory
           command: |
-            yum -y install findutils yum-utils tar gzip \
             aws ec2 describe-instances \
               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
@@ -166,7 +171,8 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-            - project/backend/
+            #- project/backend/
+
       - destroy-environment
 
   configure-infrastructure:
