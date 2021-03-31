@@ -21,47 +21,28 @@
     state: latest
     update_cache: yes
 
-#- name: "install build-essentials"
-#become: yes
-#apt:
-#name: build-essentials
-#state: latest
-#update_cache: yes
+  - name: "install nodejs and npm"
+    become: yes
+    apt:
+      name: ["nodejs", "npm"]
+      state: latest
+      update_cache: yes
 
-- name: "install build tools"
-  become: yes
-  apt:
-    name: ["curl", "openssl", "tar", "libssl-dev"]
-    state: latest
-    update_cache: yes
+  - name: "install n"
+    become: yes
+    npm:
+      name: n
+      global: yes
+      production: yes
 
-- name: "install dependencies"
-  become: yes
-  apt:
-    name: ["nodejs", "npm"]
-    state: latest
-    update_cache: yes
+  - name: "install nodejs 13.8.0"
+    become: yes
+    shell: n 13.8.0
 
-- name: "install libcap2-bin"
-  become: yes
-  apt:
-    name: libcap2-bin
-    state: latest
-    update_cache: yes
-
-- name: permission to use Port 80
-  become: yes
-  shell: setcap cap_net_bind_service=+ep /usr/local/bin/node
-
-- name: "install pm2"
-  become: yes
-  npm:
-    name: pm2
-    global: yes
-    production: yes
-    state: present
-
-- name: Create directory
-  file:
-    path: ./backend-site
-    state: directory
+  - name: "install pm2"
+    become: yes
+    npm:
+      name: pm2
+      global: yes
+      production: yes
+      state: present
