@@ -21,12 +21,12 @@
     state: latest
     update_cache: yes
 
-- name: "install build-essentials"
-  become: yes
-  apt:
-    name: build-essentials
-    state: latest
-    update_cache: yes
+#- name: "install build-essentials"
+#become: yes
+#apt:
+#name: build-essentials
+#state: latest
+#update_cache: yes
 
 - name: "install build tools"
   become: yes
