@@ -218,7 +218,7 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
-      - aws-cli/setup
+      #- aws-cli/setup
       - run:
           name: Run migrations
           command: |
