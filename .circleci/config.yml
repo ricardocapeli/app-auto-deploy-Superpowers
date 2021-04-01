@@ -234,9 +234,9 @@ jobs:
             echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
             cd backend
-            # sudo npm install
-            # npm audit fix --audit-level=critical --force
-            # npm run build
+            sudo npm install
+            sudo npm audit fix --audit-level=critical --force
+            sudo npm run build
             sudo npm run migrations > migration.log
             cat migration.log
             migration_succesful=$(cat migration.log | grep -c "has been executed successfully")
