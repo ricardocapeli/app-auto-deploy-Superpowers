@@ -199,7 +199,7 @@ jobs:
             apk add --update ansible
             cat .circleci/ansible/inventory.txt 
 
-     - run:
+      - run:
           name: Set up inventory file
           command: |
             cd .circleci/ansible
