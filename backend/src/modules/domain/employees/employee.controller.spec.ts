@@ -31,7 +31,7 @@ describe('Employee Controller', () => {
         accountNumber: 'test',
         address: 'San Pedro Sula, Calle 1, Casa 5',
         bankName: 'Promerica',
-        birthdate: '1993-14-04',
+        birthdate: '04-14-1993',
         city: 'San Pedro Sula',
         country: 'Honduras',
         displayName: 'Jimmy',
@@ -220,7 +220,7 @@ describe('Employee Controller', () => {
       // Arrange
       const request = {
         employeeId: 100,
-        birthdate: '1993-14-04',
+        birthdate: '04-14-1993',
         };
 
       // Act
