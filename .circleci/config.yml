@@ -3,21 +3,14 @@ version: 2.1
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
-    parameters:
-      frontend_env:
-        type: string
-        default: frontend-${CIRCLE_WORKFLOW_ID:0:7}
-      backend_env:
-        type: string
-        default: backend-${CIRCLE_WORKFLOW_ID:0:7}  
     steps:
       - run:
           name: Destroy environments
           when: on_fail
           command: |
-            aws s3 rm "s3://udapeople-frontend-${CIRCLE_WORKFLOW_ID}" --recursive --force
-            aws cloudformation delete-stack --stack-name udapeople-frontend-${OLDWORKFLOW}
-            aws cloudformation delete-stack --stack-name udapeople-backend-${OLDWORKFLOW}
+            aws s3 rm "s3://udapeople-${CIRCLE_WORKFLOW_ID}" --recursive
+            aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID}"
+            aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID}"
             #exit 1
 
   revert-migrations:
@@ -182,8 +175,9 @@ jobs:
                 --template-file .circleci/files/cloudfront.yml \
                 --stack-name "udapeople-cloudfront-${CIRCLE_WORKFLOW_ID}" \
                 --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID}"
-     #- destroy-environment
-      #     workflow_id: ${CIRCLE_WORKFLOW_ID} 
+
+    - destroy-environment   
+
 
   configure-infrastructure:
     docker:
@@ -273,10 +267,8 @@ jobs:
             else
               curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" --request PUT --data "failed" https://api.memstash.io/values/FAILEDMIGRATION
             fi
+            
       - destroy-environment
-          #workflow_id: ${CIRCLE_WORKFLOW_ID}
-      - revert-migrations
-          #workflow_id: ${CIRCLE_WORKFLOW_ID}
 
   deploy-frontend:
     docker:
@@ -310,9 +302,8 @@ jobs:
             npm run build
             aws s3 cp ./dist "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --recursive           
       - destroy-environment
-          #workflow_id: ${CIRCLE_WORKFLOW_ID}
       - revert-migrations
-          #workflow_id: ${CIRCLE_WORKFLOW_ID}
+
 
   deploy-backend:
     docker:
@@ -369,9 +360,8 @@ jobs:
             ansible-playbook -i inventory.txt deploy.yml
 
       - destroy-environment
-          #workflow_id: ${CIRCLE_WORKFLOW_ID}
       - revert-migrations
-          #workflow_id: ${CIRCLE_WORKFLOW_ID}
+
     # dist package.json package-lock.json tsconfig.spec.json tsconfig.json webpack.config.js
 
   smoke-test:
@@ -403,8 +393,8 @@ jobs:
             else
               return 1
             fi
-  #     - destroy-environment
-  #     - revert-migration
+     - destroy-environment
+     - revert-migration
 
   cloudfront-update:
       docker:
@@ -416,12 +406,7 @@ jobs:
             command: |
               workflow_id=${CIRCLE_WORKFLOW_ID}
               echo $workflow_id
-              aws cloudformation update-stack --use-previous-template --stack-name udapeople-cloudfront --parameters ParameterKey=WorkflowID,ParameterValue=${CIRCLE_WORKFLOW_ID}
-        # aws cloudformation deploy --template-file .circleci/files/cloudfront.yml --stack-name udapeople-cloudfront --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID}"
-        #- destroy-environment:
-        #    workflow_id: ${CIRCLE_WORKFLOW_ID}
-        #- revert-migrations:
-        #    workflow_id: ${CIRCLE_WORKFLOW_ID}    
+              aws cloudformation update-stack --use-previous-template --stack-name udapeople-cloudfront --parameters ParameterKey=WorkflowID,ParameterValue=${CIRCLE_WORKFLOW_ID}   
   cleanup:
     docker:
         - image: amazon/aws-cli      
