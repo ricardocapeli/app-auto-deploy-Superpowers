@@ -182,7 +182,7 @@ jobs:
                 --template-file .circleci/files/cloudfront.yml \
                 --stack-name "udapeople-cloudfront-${CIRCLE_WORKFLOW_ID}" \
                 --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID}"
-     - destroy-environment #:
+     - destroy-environment
       #     workflow_id: ${CIRCLE_WORKFLOW_ID} 
 
   configure-infrastructure:
@@ -273,10 +273,10 @@ jobs:
             else
               curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" --request PUT --data "failed" https://api.memstash.io/values/FAILEDMIGRATION
             fi
-      - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID}
-      - revert-migrations:
-          workflow_id: ${CIRCLE_WORKFLOW_ID}
+      - destroy-environment
+          #workflow_id: ${CIRCLE_WORKFLOW_ID}
+      - revert-migrations
+          #workflow_id: ${CIRCLE_WORKFLOW_ID}
 
   deploy-frontend:
     docker:
@@ -362,9 +362,9 @@ jobs:
             mkdir -p ../.circleci/ansible/roles/deploy/files
             cd ../.circleci/ansible
             ansible-playbook -i inventory.txt deploy.yml
-      - destroy-environment #:
+      - destroy-environment
           #workflow_id: ${CIRCLE_WORKFLOW_ID}
-      - revert-migrations #:
+      - revert-migrations
           #workflow_id: ${CIRCLE_WORKFLOW_ID}
     # dist package.json package-lock.json tsconfig.spec.json tsconfig.json webpack.config.js
 
