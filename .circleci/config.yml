@@ -362,9 +362,8 @@ jobs:
             echo "List of files and dirs that will be sent to ansible: "
             ls -a
             echo "----------------------------------------"
-            mkdir -p ../.circleci/ansible/roles/deploy/files
-            cd ../.circleci/ansible
-            ansible-playbook -i inventory.txt deploy.yml
+            cat .circleci/ansible/inventory.txt
+            ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
 
       - destroy-environment
       - revert-migrations
