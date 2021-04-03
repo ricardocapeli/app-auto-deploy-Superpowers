@@ -182,8 +182,8 @@ jobs:
                 --template-file .circleci/files/cloudfront.yml \
                 --stack-name "udapeople-cloudfront-${CIRCLE_WORKFLOW_ID}" \
                 --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID}"
-      - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID} 
+      # - destroy-environment:
+      #     workflow_id: ${CIRCLE_WORKFLOW_ID} 
 
   configure-infrastructure:
     docker:
