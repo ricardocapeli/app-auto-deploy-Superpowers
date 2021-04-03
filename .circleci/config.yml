@@ -102,7 +102,7 @@ jobs:
       - run:
           name: test-backend
           working_directory: ./backend
-          command: npm test
+          command: npm run test
             
   scan-frontend:
     docker:
@@ -442,10 +442,10 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
+      #- build-frontend
       - build-backend
-      - test-frontend:
-          requires: [build-frontend]
+      #- test-frontend:
+          #requires: [build-frontend]
       - test-backend:
           requires: [build-backend]
       - scan-backend:
