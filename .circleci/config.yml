@@ -10,7 +10,6 @@ commands:
           command: |
             aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID}"
             aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID}"
-            aws s3 rm "s3://udapeople-${CIRCLE_WORKFLOW_ID}" --recursive
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.  
@@ -306,66 +305,31 @@ jobs:
 
   deploy-backend:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: python:3.9-alpine
     steps:
-      - checkout
+      - checkout # Checkout code from git
+      # Add ssh keys with fingerprint
       - add_ssh_keys:
           fingerprints: ["02:75:f8:45:6a:c0:c8:48:c9:d4:2a:87:1e:f3:9e:af"]
-      - attach_workspace:
-          at: ~/          
+      # attach workspace
       - run:
           name: Install dependencies
           command: |
-            apk add --no-cache \
-                python3 \
-                py3-pip \
-                curl \
-                nodejs \
-                npm \
-            && pip3 install --upgrade pip \
-            && pip3 install \
-                awscli \
-            && rm -rf /var/cache/apk/*
-            apk add --update ansible
+            apk add --update ansible tar gzip nodejs npm curl
+            ansible --version
+            pip install awscli
+      - attach_workspace:
+          at: ~/
       - run:
-          name: Set up inventory file
+          name: Deploy backend
+          working_directory: ./
           command: |
+            # your code here
+            tar -zcvf backend.tar.gz backend
+            node --version
+            npm --version
             cd .circleci/ansible
-            echo "[web]" >> inventory.txt
-            URLS=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/url_${CIRCLE_WORKFLOW_ID})
-            echo "$URLS" >> inventory.txt
-            cat inventory.txt
-      - run:
-          name: Build and deploy backend (remove node modules)
-          no_output_timeout: 30m
-          command: |
-            cd backend
-            touch .env
-            echo ENVIRONMENT=production > ".env"
-            echo NODE_ENV=production >> ".env"
-            echo TYPEORM_CONNECTION=postgres >> ".env"
-            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> ".env"
-            echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> ".env"
-            echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> ".env"
-            echo TYPEORM_HOST=$TYPEORM_HOST >> ".env"
-            echo TYPEORM_PORT=$TYPEORM_PORT >> ".env"
-            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> ".env"
-            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> ".env"
-            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> ".env"
-            npm i
-            npm run build
-            echo "List of contents before deleting: "
-            ls -a
-            echo "----------------------------------------"
-            rm -rf node_modules 
-            rm -rf dist
-            rm -rf test
-            rm README.md 
-            echo "List of files and dirs that will be sent to ansible: "
-            ls -a
-            echo "----------------------------------------"
-            cat .circleci/ansible/inventory.txt
-            ansible-playbook .circleci/ansible/inventory.txt --inventory-file=inventory.txt
+            ansible-playbook -v -i inventory.txt deploy-backend.yml
 
       - destroy-environment
       - revert-migrations
