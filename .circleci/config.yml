@@ -304,7 +304,13 @@ jobs:
       - run:
           name: Deploy frontend objects
           command: |
-            aws s3 cp ./frontend/dist s3://udapeople-frontend-${CIRCLE_WORKFLOW_ID}/ --recursive
+            # aws s3 cp ./frontend/dist s3://udapeople-frontend-${CIRCLE_WORKFLOW_ID}/ --recursive
+            npm install webpack-dev-server -g
+            cd frontend
+            npm install
+            npm run build
+            cd dist
+            aws s3 sync . s3://udapeople-"${CIRCLE_WORKFLOW_ID}" --delete            
       - destroy-environment
           #workflow_id: ${CIRCLE_WORKFLOW_ID}
       - revert-migrations
