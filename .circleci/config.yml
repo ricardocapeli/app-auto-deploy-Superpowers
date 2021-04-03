@@ -167,7 +167,7 @@ jobs:
               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text >> .circleci/ansible/inventory.txt
-            cat .circleci/ansible/inventory.txt
+            cat .circleci/ansible/inventory.txt                           
 
       - persist_to_workspace:
           root: ~/
@@ -175,7 +175,15 @@ jobs:
             - project/.circleci/ansible/inventory.txt
             #- project/backend/
 
-      - destroy-environment
+      - run:
+          name: Ensure that the cloudfront infrastructure exists
+          command: |
+            aws cloudformation deploy \
+                --template-file .circleci/files/cloudfront.yml \
+                --stack-name "udapeople-cloudfront-${CIRCLE_WORKFLOW_ID}" \
+                --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID}"
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID} 
 
   configure-infrastructure:
     docker:
@@ -265,8 +273,10 @@ jobs:
             else
               curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" --request PUT --data "failed" https://api.memstash.io/values/FAILEDMIGRATION
             fi
-      - revert-migrations
-      - destroy-environment
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID}
+      - revert-migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID}
 
   deploy-frontend:
     docker:
@@ -295,8 +305,10 @@ jobs:
           name: Deploy frontend objects
           command: |
             aws s3 cp ./frontend/dist s3://udapeople-frontend-${CIRCLE_WORKFLOW_ID}/ --recursive
-      - destroy-environment  
-      - revert-migrations 
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID}
+      - revert-migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID}
 
   deploy-backend:
     docker:
@@ -350,8 +362,10 @@ jobs:
             mkdir -p ../.circleci/ansible/roles/deploy/files
             cd ../.circleci/ansible
             ansible-playbook -i inventory.txt deploy.yml
-      - destroy-environment
-      - revert-migration
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID}
+      - revert-migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID}
     # dist package.json package-lock.json tsconfig.spec.json tsconfig.json webpack.config.js
 
   smoke-test:
