@@ -394,7 +394,7 @@ jobs:
               return 1
             fi
       - destroy-environment
-      - revert-migration
+      - revert-migrations
 
   cloudfront-update:
       docker:
