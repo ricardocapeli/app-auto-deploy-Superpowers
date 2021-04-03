@@ -317,7 +317,7 @@ jobs:
           command: |
             apk add --update tar gzip ansible nodejs npm curl
             pip install awscli
-            ip install ansible
+            pip install ansible
       - run:
           name: Set up inventory file
           command: |
