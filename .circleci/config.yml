@@ -90,7 +90,6 @@ jobs:
           name: test-frontend
           working_directory: ./frontend
           command: |
-            cd frontend
             npm i
             npm run test
                 
@@ -106,7 +105,6 @@ jobs:
           name: test-backend
           working_directory: ./backend
           command: |
-            cd backend
             npm i
             npm run test
   scan-frontend:
