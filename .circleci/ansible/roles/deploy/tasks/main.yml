@@ -1,50 +1,60 @@
----
-- name: "upgrade packages"
+- name: create the application folder
   become: yes
-  apt:
-    upgrade: yes
+  ansible.builtin.file:
+    path: /opt/udapeople/backend
+    state: directory
+    mode: '0755'
 
-- name: remove dependencies that are no longer needed
-  become: yes
-  apt:
-    autoremove: yes
-
-- name: "install build tools"
-  become: yes
-  apt:
-    name: ["curl", "openssl", "tar", "libssl-dev"]
-    state: latest
-    update_cache: yes
-
-- name: "install dependencies"
-  become: yes
-  apt:
-    name: ["nodejs", "npm"]
-    state: latest
-    update_cache: yes
-
-- name: "install libcap2-bin"
-  become: yes
-  apt:
-    name: libcap2-bin
-    state: latest
-    update_cache: yes
-
-- name: "copy backend folder"
+- name: copy backend archive
   become: yes
   copy:
-    src: /root/project/backend
-    dest: /home/ubuntu
+    src: /root/project/backend.tar.gz
+    dest: /opt/udapeople/backend.tar.gz
 
-- name: install node
-  shell: |
-    cd /home/ubuntu/backend
-    npm install
-- name: setup backend services
-  shell: |
-    cd /home/ubuntu/backend
-    npm run build
-- name: start backend services
-  shell: |
-    cd /home/ubuntu/backend
-    pm2 start npm --name "backend" run start
+- name: extract backend.tar.gz
+  become: yes
+  unarchive:
+    src: /opt/udapeople/backend.tar.gz
+    dest: /opt/udapeople
+    remote_src: yes
+
+- name: debug ls
+  command: ls -l /opt/udapeople/backend
+  register: ls_out
+
+- debug: var=ls_out.stdout_lines
+
+- name: node version
+  command: node --version
+  register: node_ver_out
+
+- debug: var=node_ver_out.stdout_lines
+
+- name: build npm dependencies
+  become: yes
+  command: npm install
+  args:
+    chdir: /opt/udapeople/backend
+
+- name: build npm backend 
+  become: yes
+  command: npm run build
+  args:
+    chdir: /opt/udapeople/backend
+
+- name: start PM2 service
+  become: yes
+  command: pm2 start npm -- run start
+  args:
+    chdir: /opt/udapeople/backend
+  environment:
+    ENVIRONMENT: production
+    TYPEORM_CONNECTION: postgres
+    TYPEORM_ENTITIES: ./src/modules/domain/**/*.entity.ts
+    TYPEORM_MIGRATIONS_DIR: ./src/migrations
+    TYPEORM_MIGRATIONS: ./src/migrations./*.ts
+    TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST') }}"
+    TYPEORM_PORT: "{{ lookup('env', 'TYPEORM_PORT') }}"
+    TYPEORM_USERNAME: "{{ lookup('env', 'TYPEORM_USERNAME') }}"
+    TYPEORM_PASSWORD: "{{ lookup('env', 'TYPEORM_PASSWORD') }}"
+    TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE') }}"
