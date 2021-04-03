@@ -268,6 +268,37 @@ jobs:
       - revert-migrations
       - destroy-environment
 
+  deploy-frontend:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            apk add curl
+            apk add --update npm
+            pip3 install awscli
+      - run:
+          name: Get backend url
+          command: |
+            PUBLIC_IP=$(curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/instance_ip)
+            echo "this is the ip being pulled:"
+            echo $PUBLIC_IP
+            echo "here is the api_url being set:"
+            echo "http://$PUBLIC_IP:3030"
+            export API_URL="http://$PUBLIC_IP:3030"
+            cd frontend
+            npm install
+            npm run build
+      - run:
+          name: Deploy frontend objects
+          command: |
+            aws s3 cp ./frontend/dist s3://udapeople-${CIRCLE_WORKFLOW_ID}/ --recursive
+      - destroy-environment  
+      - revert-migrations 
+
+
 
 workflows:
   default:
@@ -290,6 +321,8 @@ workflows:
       - configure-infrastructure:
           requires: [deploy-infrastructure]
       - run-migrations:
-          requires: [configure-infrastructure]                                  
+          requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]                                            
 
 
