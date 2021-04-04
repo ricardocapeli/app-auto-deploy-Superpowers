@@ -310,8 +310,8 @@ jobs:
             npm run build
             ls ./dist
             aws s3 cp ./dist "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --recursive
-      #- destroy-environment:
-          #id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - destroy-environment:
+          id: ${CIRCLE_WORKFLOW_ID:0:7}
                   
   deploy-backend:
     docker:
@@ -341,10 +341,10 @@ jobs:
             cd .circleci/ansible
             ansible-playbook -v -i inventory.txt deploy-backend.yml
       # Here's where you will add some code to rollback on failure  
-      #- destroy-environment:
-         #id: ${CIRCLE_WORKFLOW_ID:0:7}
-      #- revert-migrations:
-          #id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - destroy-environment:
+         id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migrations:
+          id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   smoke-test:
     docker:
