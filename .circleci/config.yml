@@ -289,14 +289,16 @@ jobs:
 
   deploy-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - run:
           name: install dependencies
           command: |
-            sudo apt-get update -y
-            sudo apt-get install -y curl awscli tar gzip
+            apk update
+            apk add curl tar gzip
+            apk add --update npm
+            pip3 install awscli
       - attach_workspace:
           at: ~/
       - run:
