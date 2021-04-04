@@ -306,8 +306,9 @@ jobs:
             ls ~/udapeople-backend-url
             export API_URL=$(cat ~/udapeople-backend-url)
             echo "${API_URL}"
-            npm install
+            npm i
             npm run build
+            ls ./dist
             aws s3 cp ./dist "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --recursive
       #- destroy-environment:
           #id: ${CIRCLE_WORKFLOW_ID:0:7}
