@@ -373,13 +373,12 @@ jobs:
           command: |
             # your code here
             URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-west-2.amazonaws.com"
-            if curl -s ${URL} | grep "Welcome"
-            then
-              return 1
-            else
-              return 0
-            fi
-
+            #if curl -s ${URL} | grep "Welcome"
+            #then
+            #  #return 1
+            #else
+            #  #return 0
+            #fi
       # Here's where you will add some code to rollback on failure  
       #- destroy-environment:
           #id: ${CIRCLE_WORKFLOW_ID:0:7}
