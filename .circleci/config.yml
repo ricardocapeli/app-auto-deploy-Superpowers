@@ -284,8 +284,8 @@ jobs:
               curl -H "Content-Type: text/plain" -H "token: ${MEMSTASH_TOKEN}" --request PUT --data "fail" https://api.memstash.io/values/udapeople-migration_${CIRCLE_WORKFLOW_ID}
             fi
       # Here's where you will add some code to rollback on failure      
-      - destroy-environment:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}
+      #- destroy-environment:
+          #id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   deploy-frontend:
     docker:
@@ -309,8 +309,8 @@ jobs:
             npm install
             npm run build
             aws s3 cp ./dist "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --recursive
-      - destroy-environment:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}
+      #- destroy-environment:
+          #id: ${CIRCLE_WORKFLOW_ID:0:7}
                   
   deploy-backend:
     docker:
@@ -340,10 +340,10 @@ jobs:
             cd .circleci/ansible
             ansible-playbook -v -i inventory.txt deploy-backend.yml
       # Here's where you will add some code to rollback on failure  
-      - destroy-environment:
-         id: ${CIRCLE_WORKFLOW_ID:0:7}
-      - revert-migrations:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}
+      #- destroy-environment:
+         #id: ${CIRCLE_WORKFLOW_ID:0:7}
+      #- revert-migrations:
+          #id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   smoke-test:
     docker:
