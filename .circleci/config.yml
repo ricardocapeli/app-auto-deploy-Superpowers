@@ -284,8 +284,8 @@ jobs:
               curl -H "Content-Type: text/plain" -H "token: ${MEMSTASH_TOKEN}" --request PUT --data "fail" https://api.memstash.io/values/udapeople-migration_${CIRCLE_WORKFLOW_ID}
             fi
       # Here's where you will add some code to rollback on failure      
-      #- destroy-environment:
-          #id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - destroy-environment:
+          id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   deploy-frontend:
     docker:
@@ -399,12 +399,14 @@ jobs:
           name: Update cloudfront distribution
           command: |
             # your code here
+            workflow_id=${CIRCLE_WORKFLOW_ID}
+            echo $workflow_id
             aws cloudformation deploy \
               --template-file ./.circleci/files/cloudfront.yml \
-              --stack-name udapeople-vekb3zs6da2fbxtn \
+              --stack-name udapeople-v \
               --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
-              --tags project=udapeople \
-              --region=eu-central-1
+              --tags project=udapeople
+
       # Here's where you will add some code to rollback on failure  
       - revert-migrations:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
@@ -424,25 +426,15 @@ jobs:
       - run:
           name: Remove old stacks and files
           command: |
-            ls ~/old-workflow-id
-            export OldWorkflowID=$(cat ~/old-workflow-id)
-            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-                --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
-            
-            echo "Old Workflow ID: ${OldWorkflowID}"
-
+            export OldWorkflowID=$(aws cloudformation list-exports --query "Exports[?Name==\`WorkflowID\`].Value" --no-paginate --output text)
+            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
+            echo $OldWorkflowID
+            echo $STACKS
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             then
-              # your code here
-              # remove stacks
-              echo "remove stack: udapeople-backend-${OldWorkflowID}"
-              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
-              # remove S3 bucket
-              echo "remove S3 bucket: udapeople-${OldWorkflowID}"
-              aws s3 rm "s3://udapeople-${OldWorkflowID}" --force
-              # remove frontend stack
-              echo "remove stack: udapeople-frontend-${OldWorkflowID}"
-              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
+              aws s3 rb s3://udapeople-frontend-${OldWorkflowID} --force
+              aws cloudformation delete-stack --stack-name backend-${OldWorkflowID}
+              aws cloudformation delete-stack --stack-name frontend-${OldWorkflowID}
             fi
 workflows:
   default:
