@@ -380,10 +380,10 @@ jobs:
             #  #return 0
             #fi
       # Here's where you will add some code to rollback on failure  
-      #- destroy-environment:
-          #id: ${CIRCLE_WORKFLOW_ID:0:7}
-      #- revert-migrations:
-          #id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - destroy-environment:
+          id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migrations:
+          id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   cloudfront-update:
     docker:
@@ -439,7 +439,7 @@ jobs:
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
               # remove S3 bucket
               echo "remove S3 bucket: udapeople-${OldWorkflowID}"
-              aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
+              aws s3 rm "s3://udapeople-${OldWorkflowID}" --force
               # remove frontend stack
               echo "remove stack: udapeople-frontend-${OldWorkflowID}"
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
