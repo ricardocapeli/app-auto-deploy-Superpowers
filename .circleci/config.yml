@@ -431,7 +431,7 @@ jobs:
 
             echo $OldWorkflowID
             echo $STACKS
-            
+
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             then
               aws s3 rb s3://udapeople-frontend-${OldWorkflowID} --force
@@ -458,10 +458,10 @@ workflows:
               only: [main]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      - check-postgres-connectivity:
-          requires: [deploy-infrastructure]
-      # - run-migrations:
-      #     requires: [configure-infrastructure]
+      # - check-postgres-connectivity:
+      #     requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
       - deploy-frontend:
           requires: [run-migrations]
       - deploy-backend:
