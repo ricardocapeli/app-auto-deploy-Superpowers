@@ -104,3 +104,5 @@ antt
 
 
 .circleci_bkp/
+.csv
+.pem
