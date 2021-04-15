@@ -13,3 +13,6 @@ http://ec2-52-39-231-74.us-west-2.compute.amazonaws.com:3030
 URL05: public URL to the Prometheus Server
 http://ec2-35-165-144-151.us-west-2.compute.amazonaws.com:9090/new/targets
 
+
+All pipelines circleci
+https://app.circleci.com/pipelines/github/ricardocapeli/app-auto-deploy-Superpowers
