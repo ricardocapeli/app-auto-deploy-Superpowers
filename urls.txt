@@ -1,0 +1,15 @@
+URL01: URL to the public GitHub repository
+https://github.com/ricardocapeli/app-auto-deploy-Superpowers
+
+URL02: public URL for the S3 Bucket
+http://udapeople-e36af9a.s3-website-us-west-2.amazonaws.com/
+
+URL03: CloudFront distribution
+http://dn8wr75pldrm9.cloudfront.net
+
+URL04: public URL for the back-end server in EC2
+http://ec2-52-39-231-74.us-west-2.compute.amazonaws.com:3030
+
+URL05: public URL to the Prometheus Server
+http://ec2-35-165-144-151.us-west-2.compute.amazonaws.com:9090/new/targets
+
