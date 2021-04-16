@@ -22,9 +22,7 @@ Resources:
           - DomainName: !Sub "udapeople-${WorkflowID}.s3.amazonaws.com"
             Id: webpage
             S3OriginConfig:
-              OriginAccessIdentity: !Sub 
-               - origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}
-               - { CloudFrontOriginAccessIdentity: !Ref CloudFrontOriginAccessIdentity }
+              OriginAccessIdentity: !Sub "origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}"
         Enabled: True
         DefaultRootObject: index.html
         DefaultCacheBehavior:
